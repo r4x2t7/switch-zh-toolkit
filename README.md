@@ -25,6 +25,8 @@ hekate-zh/                   Hekate / Nyx 中文界面资源（本仓库自制�
   hekate_ipl_cn.ini          中文启动项配置模板
   icons/                     4 个霓虹风启动项图标（32bit BMP，192x192）
   icons/preview.png          效果预览
+  hbmenu_zh.nro              已打好中文补丁的 Homebrew Menu (nx-hbmenu v3.6.1)
+  patch_hbmenu_zh.py         上面那个补丁的脚本（可对任意 nx-hbmenu.nro 复现）
 
 docs/
   overlay-lang-mechanism.md  语言包机制与 Hekate 汉化要点（含源码依据）
@@ -93,6 +95,34 @@ icon=bootloader/res/icon_emu_nobox.bmp
 ```
 
 完整机制（含源码行号）见 [`docs/overlay-lang-mechanism.md`](docs/overlay-lang-mechanism.md)。
+
+### hbmenu（Homebrew Menu）汉化
+
+`hekate-zh/hbmenu_zh.nro` 是打好中文补丁的 **nx-hbmenu v3.6.1**。
+
+上游其实**编了完整的简体中文语言表**（`common/language.c` 里的 `STR_ZH_HANS`），
+但 `common/text.c` 的 `textInit()` 里有一行被注释掉的逻辑，导致 `s_textLang`
+被永远锁死成英文：
+
+```c
+SetLanguage Language = SetLanguage_ENUS;
+s_textLang = Language;                        // ← 先设成英文
+rc = setGetSystemLanguage(&s_textLanguageCode);
+rc = setMakeLanguage(s_textLanguageCode, &Language);   // ← 系统语言算出来了，但没用
+//if (R_SUCCEEDED(rc) && Language < 17) s_textLang = Language;  // ← 被注释掉
+```
+
+所以本仓库的做法是：**不重编译，直接把 `g_strings` 表里每行的「中文槽」指针
+搬进「英文槽」**（中文串本来就在二进制里），29/38 条变成中文，其余 9 条是上游
+在源码里就注释掉的条目，本来也不显示。
+
+- 改动量：**44 字节**（29 个指针槽），零新增数据。
+- 用法：把 `hbmenu_zh.nro` 放到 SD 卡根目录，覆盖 `hbmenu.nro`。
+- 对任意 nx-hbmenu 复现：`python patch_hbmenu_zh.py`（脚本会自动定位语言表并校验结构）。
+- ⚠️ **需要主机系统语言设为中文**：hbmenu 用 `plGetSharedFont()` 按**系统语言**
+  加载共享字体（`common/font.c`），系统语言不是中文时字体里没有 CJK 字形，
+  中文会显示成方块。
+
 
 ---
 
