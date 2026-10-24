@@ -1,0 +1,30 @@
+MIT License
+
+Copyright (c) 2026 switch-zh-toolkit contributors
+
+本许可适用于本仓库中**由本仓库作者编写**的内容，包括：
+- README.md / NOTICE.md
+- docs/ 下的说明文档
+- install/ 下的安装脚本与 sources.json
+- hekate-zh/ 下的 hekate_ipl_cn.ini、icons/、tools/
+
+**不适用于** `overlays/` 目录下的语言包文件。这些文件转存自第三方作者的公开发布，
+版权归各自作者所有，遵循其原仓库的许可条款，详见 NOTICE.md 与 overlays/SOURCES.md。
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

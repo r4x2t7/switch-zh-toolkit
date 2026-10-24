@@ -1,0 +1,121 @@
+{
+  "_comment": "所有下载均来自原作者官方发布页；sha256 取自 GitHub Release 的 digest 标注。",
+  "packages": [
+    {
+      "name": "Ultrahand",
+      "repo": "zdm65477730/Ultrahand-Overlay",
+      "tag": "2.5.3",
+      "asset": "Ultrahand.zip",
+      "url": "https://github.com/zdm65477730/Ultrahand-Overlay/releases/download/2.5.3/Ultrahand.zip",
+      "sha256": "4067a03b4469685eb137db2b19eb8997df4bf24219ec9dc57ab42459d9da5ed7",
+      "provides": [
+        "switch/.overlays/ovlmenu.ovl",
+        "config/Ultrahand/lang/*.json"
+      ],
+      "note": "中文版；同时按新版 libnx 重编（修复 HOS 21.0.0 起的 TLS ABI 变化导致的崩溃）"
+    },
+    {
+      "name": "ovl-sysmodules",
+      "repo": "zdm65477730/ovl-sysmodules",
+      "tag": "v1.3.2",
+      "asset": "ovl-sysmodules.zip",
+      "url": "https://github.com/zdm65477730/ovl-sysmodules/releases/download/v1.3.2/ovl-sysmodules.zip",
+      "sha256": "66f352f29c731c3736c4ef2d9847d7a69cc106a04d71123d9f0ad0619dde6297",
+      "provides": [
+        "switch/.overlays/ovl-sysmodules.ovl",
+        "switch/.overlays/lang/ovl-sysmodules/zh-Hans.json",
+        "switch/.overlays/lang/ovl-sysmodules/zh-Hant.json",
+        "config/ovl-sysmodules/config.ini"
+      ],
+      "note": "覆盖层自 v1.3.x 起改名为 ovl-sysmodules.ovl（旧名 ovlSysmodules.ovl 需删除）"
+    },
+    {
+      "name": "QuickNTP",
+      "repo": "zdm65477730/QuickNTP",
+      "tag": "1.6.0",
+      "asset": "QuickNTP.zip",
+      "url": "https://github.com/zdm65477730/QuickNTP/releases/download/1.6.0/QuickNTP.zip",
+      "sha256": "1ae65b3e2889f3472d3a65c69ce8ec9e7d7f5a6fde753b75748fb144a7f84649",
+      "provides": [
+        "switch/.overlays/QuickNTP.ovl",
+        "switch/.overlays/lang/QuickNTP/zh-Hans.json",
+        "switch/.overlays/lang/QuickNTP/zh-Hant.json",
+        "config/QuickNTP/config.ini"
+      ],
+      "note": "上游 QuickNTP 1.6.0+r6 的汉化构建（多语言支持）"
+    },
+    {
+      "name": "ReverseNX-RT",
+      "repo": "zdm65477730/ReverseNX-RT",
+      "tag": "v2.2.2",
+      "asset": "ReverseNX-RT.zip",
+      "url": "https://github.com/zdm65477730/ReverseNX-RT/releases/download/v2.2.2/ReverseNX-RT.zip",
+      "sha256": "0f78d4476b5ded7a337cecdc29b04028552ea1fa59d4436c2f7ff0b85f2d7337",
+      "provides": [
+        "switch/.overlays/ReverseNX-RT.ovl",
+        "switch/.overlays/lang/ReverseNX-RT/zh-Hans.json",
+        "switch/.overlays/lang/ReverseNX-RT/zh-Hant.json",
+        "switch/.overlays/FPSLocker.ovl",
+        "switch/.overlays/lang/FPSLocker/zh-Hans.json",
+        "switch/.overlays/lang/FPSLocker/zh-Hant.json",
+        "atmosphere/contents/0000000000534C56/exefs.nsp",
+        "atmosphere/exefs_patches/SaltyNX_Fixes/*"
+      ],
+      "note": "同时带 FPSLocker 中文版与 SaltyNX_Fixes 补丁"
+    },
+    {
+      "name": "sys-clk",
+      "repo": "zdm65477730/sys-clk",
+      "tag": "v1.0.2",
+      "asset": "sys-clk.zip",
+      "url": "https://github.com/zdm65477730/sys-clk/releases/download/v1.0.2/sys-clk.zip",
+      "sha256": "9edbd68bd62ff623dd552c278520a66df0451fe24c63a9b76de8869ab147ec76",
+      "provides": [
+        "switch/.overlays/sys-clk.ovl",
+        "switch/.overlays/lang/sys-clk/zh-Hans.json",
+        "switch/.overlays/lang/sys-clk/zh-Hant.json",
+        "config/sys-clk/config.ini",
+        "atmosphere/contents/00FF0000636C6BFF/exefs.nsp"
+      ],
+      "note": "覆盖层会校验运行中 sys-clk 的版本，.ovl 与 sysmodule 必须成对升级"
+    },
+    {
+      "name": "sys-patch",
+      "repo": "zdm65477730/sys-patch",
+      "tag": "v1.6.3.0",
+      "asset": "sys-patch.zip",
+      "url": "https://github.com/zdm65477730/sys-patch/releases/download/v1.6.3.0/sys-patch.zip",
+      "sha256": "3683b7a5e25bc9aa5f18fa80bf8a6457bf3154b694d49ce91076df94e4411829",
+      "provides": [
+        "switch/.overlays/sys-patch.ovl",
+        "switch/.overlays/lang/sys-patch/zh-Hans.json",
+        "switch/.overlays/lang/sys-patch/zh-Hant.json",
+        "atmosphere/contents/420000000000000B/exefs.nsp"
+      ],
+      "note": "sysmodule 与上游 1.6.3.0 同版本；安装时保留用户自己的 config/sys-patch/config.ini"
+    },
+    {
+      "name": "EdiZon",
+      "repo": "zdm65477730/EdiZon-Overlay",
+      "tag": "v1.0.8",
+      "asset": "EdiZon.zip",
+      "url": "https://github.com/zdm65477730/EdiZon-Overlay/releases/download/v1.0.8/EdiZon.zip",
+      "sha256": "2a0db93c174fcfdb1733fd2a3d727b5d9cfc661c02cb559b4af1cea2df270e22",
+      "provides": [
+        "switch/.overlays/lang/EdiZon/zh-Hans.json",
+        "switch/.overlays/lang/EdiZon/zh-Hant.json"
+      ],
+      "note": "只取语言包；覆盖层本体版本较低，建议保留你自己的新版 .ovl"
+    }
+  ],
+  "obsolete_overlays": [
+    { "remove": "switch/.overlays/ovlSysmodules.ovl", "replaced_by": "ovl-sysmodules.ovl" },
+    { "remove": "switch/.overlays/ReverseNX-RT-ovl.ovl", "replaced_by": "ReverseNX-RT.ovl" },
+    { "remove": "switch/.overlays/sys-clk-overlay.ovl", "replaced_by": "sys-clk.ovl" },
+    { "remove": "switch/.overlays/sys-patch-overlay.ovl", "replaced_by": "sys-patch.ovl" }
+  ],
+  "preserve_user_configs": [
+    "config/sys-patch/config.ini",
+    "config/ultrahand/config.ini"
+  ]
+}

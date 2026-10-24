@@ -1,0 +1,107 @@
+# Switch 中文资源合集
+
+给 Nintendo Switch 自制软件的**中文覆盖层语言包**、**Hekate / Nyx 中文界面资源**，以及把它们装到 SD 卡上的脚本。
+
+> 收录的是 **Ultrahand / Tesla 生态覆盖层（.ovl）** 的简体中文语言包，以及 **Hekate 启动菜单**的中文标签与图标。
+> 二进制文件（`.ovl`）不随本仓库分发，安装脚本会从**原作者的官方发布页**下载并校验 SHA-256。
+
+---
+
+## 目录结构
+
+```
+overlays/                    各覆盖层的中文语言包（可直接查看 / 修改 / 自行补翻）
+  <APPTITLE>/
+    zh-Hans.json             简体中文
+    zh-Hant.json             繁体中文
+  SOURCES.md                 每个文件的来源仓库、发布 tag、资产名与 sha256
+
+install/
+  install-zh-overlays.ps1    Windows / PowerShell 安装器
+  install-zh-overlays.sh     macOS / Linux 安装器
+  sources.json               下载地址与 sha256 清单
+
+hekate-zh/                   Hekate / Nyx 中文界面资源（本仓库自制）
+  hekate_ipl_cn.ini          中文启动项配置模板
+  icons/                     4 个霓虹风启动项图标（32bit BMP，192x192）
+  icons/preview.png          效果预览
+
+docs/
+  overlay-lang-mechanism.md  语言包机制与 Hekate 汉化要点（含源码依据）
+```
+
+---
+
+## 快速安装
+
+### Windows（PowerShell）
+
+```powershell
+# 自动识别卷标为 SWITCH 的 SD 卡
+.\install\install-zh-overlays.ps1
+
+# 指定盘符
+.\install\install-zh-overlays.ps1 -Drive H:
+
+# 只装语言包，保留你现有的英文 .ovl（想自己再翻几句时用）
+.\install\install-zh-overlays.ps1 -LangOnly
+```
+
+### macOS / Linux
+
+```bash
+chmod +x install/install-zh-overlays.sh
+./install/install-zh-overlays.sh            # 自动识别 SD 卡
+./install/install-zh-overlays.sh /mnt/sd    # 指定挂载点
+./install/install-zh-overlays.sh --lang-only
+```
+
+脚本会：**自动定位 SD 卡 → 下载官方汉化包 → 校验 SHA-256 → 备份被替换的旧文件 → 安装 → 打印结果**。
+
+### 手动安装
+
+只要语言包的话，把 `overlays/<APPTITLE>/zh-Hans.json` 复制到 SD 卡：
+
+```
+/switch/.overlays/lang/<APPTITLE>/zh-Hans.json
+```
+
+`<APPTITLE>` 见 `overlays/SOURCES.md`。**只有覆盖层本体（`.ovl`）支持这套语言包时才会生效**，
+纯硬编码英文界面的覆盖层（如 `NX-FanControl`）无法通过语言包汉化。
+
+---
+
+## Hekate / Nyx 中文部分
+
+`hekate-zh/` 是本仓库自制的内容：
+
+- **`hekate_ipl_cn.ini`** —— 中文启动项配置模板。Hekate 的启动项标签直接取自 ini 的段名，
+  把段名改成中文即可显示中文（UTF-8 无 BOM + CRLF）。内含四项：
+  `破解-虚拟系统` / `Fusee-虚拟系统` / `原生-真实系统` / `破解-真实系统`。
+
+- **`icons/`** —— 4 个 192×192 / 32 位 BMP 启动项图标（霓虹赛博风 Switch 主题）。
+  Hekate 会自动去 `bootloader/res/<段名>.bmp` 找图标，所以**不需要改 ini**；
+  若用自定义段名，在 ini 里加一行 `icon=bootloader/res/xxx_nobox.bmp` 即可。
+
+装法：
+
+```ini
+[破解-虚拟系统]
+pkg3=atmosphere/package3
+emummcforce=1
+icon=bootloader/res/icon_emu_nobox.bmp
+```
+
+完整机制（含源码行号）见 [`docs/overlay-lang-mechanism.md`](docs/overlay-lang-mechanism.md)。
+
+---
+
+## 来源与致谢
+
+- 覆盖层语言包与中文版 `.ovl` 均来自社区汉化作者 **[zdm65477730](https://github.com/zdm65477730)** 的公开发布；
+  上游原作者是 **[ppkantorski](https://github.com/ppkantorski)**。
+- 各文件的确切来源、发布 tag 与 SHA-256 见 [`overlays/SOURCES.md`](overlays/SOURCES.md)。
+- Hekate / Nyx 本身来自 [Atmosphere-NX/Hekate](https://github.com/Atmosphere-NX/Hekate) 与
+  [Atmosphere-NX/Atmosphere](https://github.com/Atmosphere-NX/Atmosphere)。
+
+详见 [`NOTICE.md`](NOTICE.md)。
