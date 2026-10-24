@@ -146,6 +146,41 @@ rc = setMakeLanguage(s_textLanguageCode, &Language);   // ← 系统语言算出
   中文会显示成方块。
 
 
+## 密钥导出（prod.keys）
+
+DBI / 很多工具会提示缺 `eticket_rsa_kek`、`key_area_key_application_00~04`、`titlekey_00~03`。
+这些来自主机熔丝与真机 eMMC 里的 keyblob，**原装机可以自己导出来**（改机机因为没有原始密钥才导不出）。
+
+### 方法 A：Hekate 一键（推荐）
+
+1. 把 `Lockpick_RCM.bin` 放到 SD 卡 `bootloader/payloads/`（**必须是这个路径**）
+2. 开机进 Hekate → **主机信息（Console Info）** → 点 **Lockpick** 按钮 → 确认
+3. 密钥被 dump 到 SD 卡（`prod.keys` / `title.keys`）
+4. 回 CFW，DBI 的缺失警告即消失
+
+Hekate 会自己校验这个 payload（`nyx_gui/frontend/gui_info.c:2652-2689`）：
+
+```c
+#define LOCKPICK_MAGIC_OFFSET   0x118   // 必须等于 "LOCK"
+#define LOCKPICK_VERSION_OFFSET 0x11C
+#define LOCKPICK_MIN_VERSION    0x1090500  // 版本必须 >= 1.9.5
+```
+
+版本太旧或缺失时按钮会变灰，并提示
+`bootloader/payloads/Lockpick_RCM.bin is missing or old!`
+
+本仓库验证过的版本（`impeeza/Lockpick_RCMDecScots`）：
+
+| 版本 | sha256 | Hekate 校验 |
+|---|---|---|
+| v2.0.1（`_Hekate` 包内） | `f56628648c971a3ee9fec020d291df4121b21606a9dc1d94f8456ed012ce2aef` | PASS（版本字 `2.01`） |
+
+### 方法 B：PC 端 RCM 注入
+
+1. 主机进 RCM 模式
+2. 注入 `fusee.bin`（原装机用标准 fusee）
+3. 再注入 `Lockpick_RCM.bin`
+
 ---
 
 ## 来源与致谢
