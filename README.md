@@ -183,6 +183,45 @@ Hekate 会自己校验这个 payload（`nyx_gui/frontend/gui_info.c:2652-2689`�
 
 ---
 
+## ⚠️ 重要：安装脚本绝不替换 CFW 核心 sysmodule
+
+本仓库的安装脚本**只装覆盖层（`.ovl`）、语言包和 GUI 资源**，
+永远不会碰 `atmosphere/contents/*/exefs.nsp`（系统模块本体）、`atmosphere/package3`、
+`atmosphere/stratosphere.romfs`。即便某个汉化包里带了这些文件，脚本也会按
+`sources.json` 的 `do_not_touch` 名单挡下来。
+
+> **真实翻车记录（2026-10-24）**
+> 一台 Atmosphère 1.11.2 / HOS 22.5.0 / emuMMC 的机器，把
+> `atmosphere/contents/420000000000000B/exefs.nsp`（sys-patch）换成中文构建后，
+> **所有游戏都启动不了** —— HOME 里点任何软件都弹「无法启动软件，请在HOME菜单中再试一次」。
+> 原因：sys-patch 负责给 HOS loader 打补丁，补丁表跟该 Atmosphère 版本不匹配，
+> loader 就拒绝启动任何 title（注意：HOME 菜单本身能进，所以这不是 boot2 链崩了，
+> 用这个现象就能把范围切到 loader/补丁层）。
+> 把原件换回去立刻恢复。
+>
+> 同理，中文版 sys-clk 的 sysmodule（`00FF0000636C6BFF`）也不建议替换。
+
+### 出问题时怎么回滚
+
+| 现象 | 处理 |
+|---|---|
+| 所有游戏都「无法启动软件」 | 换回备份的 `atmosphere/contents/420000000000000B/exefs.nsp`（sys-patch 原件） |
+| 开机卡死 / 进不了系统 | 删掉 `atmosphere/contents/` 下各模块的 `flags/boot2.flag` |
+| 覆盖层界面异常 / 花屏 | 删掉 `switch/.overlays/` 下新装的 `.ovl` 与 `lang/` 目录 |
+| 想整体回到英文 | 删掉 `switch/.overlays/lang/` 整个目录，并把改名前的旧 `.ovl` 换回来 |
+| 想清掉 USB 3.0 | `atmosphere/config/system_settings.ini` 里 `usb30_force_enabled` 改回 `u8!0x0` |
+
+安装脚本会把被替换的文件备份到
+`%TEMP%\switch-zh-backup-<时间戳>\`（macOS/Linux 是 `$TMPDIR/switch-zh-backup-<时间戳>/`）。
+
+### 中文 Hekate 的版本守卫
+
+中文 Nyx（`nyx.bin`）与 Atmosphère/Hekate 的版本必须严格对应，
+脚本会先读卡上现有 `bootloader/sys/nyx.bin` 偏移 `0x9C` 处的版本字
+（3 个 ASCII 字符，1.9.4 = `194`），**不匹配就跳过这一项并提示**，不硬装。
+
+---
+
 ## 来源与致谢
 
 - 覆盖层语言包与中文版 `.ovl` 均来自社区汉化作者 **[zdm65477730](https://github.com/zdm65477730)** 的公开发布；

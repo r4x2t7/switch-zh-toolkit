@@ -123,9 +123,28 @@ d=json.load(open(src_file,encoding='utf-8'))
 pkg=next((p for p in d["packages"] if p["name"]==name),None)
 if not pkg: raise SystemExit
 keep=set(d.get("preserve_user_configs",[]))
+blocked_pats=d.get("do_not_touch",[])
+
+# 版本守卫：例如中文 Nyx 只有在卡上现有版本一致时才允许替换
+rf=pkg.get("require_file")
+if rf:
+    rfp=os.path.join(sd,rf.replace('/',os.sep))
+    if not os.path.exists(rfp):
+        print("    \033[31m[ERR]\033[0m  守卫未通过：卡上缺少 %s，已跳过该包"%rf); raise SystemExit
+    with open(rfp,'rb') as f:
+        f.seek(int(pkg["require_offset"])); got=f.read(len(pkg["require_bytes"]))
+    if got != pkg["require_bytes"].encode('ascii'):
+        print("    \033[31m[ERR]\033[0m  守卫未通过：%s 偏移 0x%X 期望 '%s' 实际 '%s'，已跳过该包（版本不匹配，强装会导致启动失败）"
+              %(rf,int(pkg["require_offset"]),pkg["require_bytes"],got.decode('ascii','replace'))); raise SystemExit
+    print("    \033[32m[OK]\033[0m   版本守卫通过（%s 偏移 0x%X = '%s'）"%(rf,int(pkg["require_offset"]),pkg["require_bytes"]))
+
 for rel in pkg["provides"]:
-    if rel in keep:
-        print("    \033[33m[WARN]\033[0m 保留用户配置，跳过: %s"%rel); continue
+    # 防线一：绝不碰 CFW 核心 sysmodule
+    if any(fnmatch.fnmatch(rel,p) for p in blocked_pats):
+        print("    \033[33m[WARN]\033[0m 保护名单，跳过（不改动 CFW 核心）: %s"%rel); continue
+    # 防线二：用户已存在的配置文件不覆盖
+    if rel in keep and os.path.exists(os.path.join(sd,rel.replace('/',os.sep))):
+        print("    \033[33m[WARN]\033[0m 保留用户已有配置，跳过: %s"%rel); continue
     pat=os.path.join(ex,rel.replace('/',os.sep))
     hits=[]
     if os.path.isfile(pat): hits=[pat]

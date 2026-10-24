@@ -1,18 +1,29 @@
 {
   "_comment": "所有下载均来自原作者官方发布页；sha256 取自 GitHub Release 的 digest 标注。",
+  "_warning": "本脚本绝不替换 atmosphere/contents/ 下的任何 exefs.nsp（CFW 核心 sysmodule）。实测：换成中文构建会导致 HOS loader 补丁链不匹配，表现为「无法启动软件，请在HOME菜单中再试一次」，所有游戏都起不来。",
+
+  "do_not_touch": [
+    "atmosphere/contents/420000000000000B/exefs.nsp",
+    "atmosphere/contents/00FF0000636C6BFF/exefs.nsp",
+    "atmosphere/contents/0000000000534C56/exefs.nsp",
+    "atmosphere/contents/*/exefs.nsp",
+    "atmosphere/package3",
+    "atmosphere/stratosphere.romfs"
+  ],
+
   "packages": [
     {
-      "name": "Ultrahand",
-      "repo": "zdm65477730/Ultrahand-Overlay",
-      "tag": "2.5.3",
-      "asset": "Ultrahand.zip",
-      "url": "https://github.com/zdm65477730/Ultrahand-Overlay/releases/download/2.5.3/Ultrahand.zip",
-      "sha256": "4067a03b4469685eb137db2b19eb8997df4bf24219ec9dc57ab42459d9da5ed7",
-      "provides": [
-        "switch/.overlays/ovlmenu.ovl",
-        "config/Ultrahand/lang/*.json"
-      ],
-      "note": "中文版；同时按新版 libnx 重编（修复 HOS 21.0.0 起的 TLS ABI 变化导致的崩溃）"
+      "name": "Hekate/Nyx 中文界面",
+      "repo": "zdm65477730/hekate",
+      "tag": "v6.5.4-CN",
+      "asset": "nyx.bin",
+      "url": "https://github.com/zdm65477730/hekate/releases/download/v6.5.4-CN/nyx.bin",
+      "sha256": "aba420386b2c3922a1959acd9c8e9fbd14da9192d1984e190000ff2950d8460f",
+      "provides": ["bootloader/sys/nyx.bin"],
+      "require_file": "bootloader/sys/nyx.bin",
+      "require_offset": 156,
+      "require_bytes": "194",
+      "note": "Nyx 版本字在载荷偏移 0x9C（3 个 ASCII 字符，1.9.4 = '194'）。只有卡上现有 nyx.bin 也是 1.9.x 时才安装，否则跳过并提示手动处理。"
     },
     {
       "name": "ovl-sysmodules",
@@ -27,7 +38,7 @@
         "switch/.overlays/lang/ovl-sysmodules/zh-Hant.json",
         "config/ovl-sysmodules/config.ini"
       ],
-      "note": "覆盖层自 v1.3.x 起改名为 ovl-sysmodules.ovl（旧名 ovlSysmodules.ovl 需删除）"
+      "note": "覆盖层自 v1.3.x 起改名为 ovl-sysmodules.ovl（旧名 ovlSysmodules.ovl 会被自动清理）"
     },
     {
       "name": "QuickNTP",
@@ -41,8 +52,7 @@
         "switch/.overlays/lang/QuickNTP/zh-Hans.json",
         "switch/.overlays/lang/QuickNTP/zh-Hant.json",
         "config/QuickNTP/config.ini"
-      ],
-      "note": "上游 QuickNTP 1.6.0+r6 的汉化构建（多语言支持）"
+      ]
     },
     {
       "name": "ReverseNX-RT",
@@ -57,11 +67,9 @@
         "switch/.overlays/lang/ReverseNX-RT/zh-Hant.json",
         "switch/.overlays/FPSLocker.ovl",
         "switch/.overlays/lang/FPSLocker/zh-Hans.json",
-        "switch/.overlays/lang/FPSLocker/zh-Hant.json",
-        "atmosphere/contents/0000000000534C56/exefs.nsp",
-        "atmosphere/exefs_patches/SaltyNX_Fixes/*"
+        "switch/.overlays/lang/FPSLocker/zh-Hant.json"
       ],
-      "note": "同时带 FPSLocker 中文版与 SaltyNX_Fixes 补丁"
+      "note": "只装覆盖层与语言包；包内的 SaltyNX sysmodule / .ips 补丁一概不动"
     },
     {
       "name": "sys-clk",
@@ -74,10 +82,9 @@
         "switch/.overlays/sys-clk.ovl",
         "switch/.overlays/lang/sys-clk/zh-Hans.json",
         "switch/.overlays/lang/sys-clk/zh-Hant.json",
-        "config/sys-clk/config.ini",
-        "atmosphere/contents/00FF0000636C6BFF/exefs.nsp"
+        "config/sys-clk/config.ini"
       ],
-      "note": "覆盖层会校验运行中 sys-clk 的版本，.ovl 与 sysmodule 必须成对升级"
+      "note": "只装覆盖层；sys-clk 的 sysmodule（00FF0000636C6BFF）保持你卡上原版不动 —— 换了会与 Atmosphère 不匹配"
     },
     {
       "name": "sys-patch",
@@ -89,10 +96,9 @@
       "provides": [
         "switch/.overlays/sys-patch.ovl",
         "switch/.overlays/lang/sys-patch/zh-Hans.json",
-        "switch/.overlays/lang/sys-patch/zh-Hant.json",
-        "atmosphere/contents/420000000000000B/exefs.nsp"
+        "switch/.overlays/lang/sys-patch/zh-Hant.json"
       ],
-      "note": "sysmodule 与上游 1.6.3.0 同版本；安装时保留用户自己的 config/sys-patch/config.ini"
+      "note": "⚠️ 绝不装包内的 atmosphere/contents/420000000000000B/exefs.nsp —— 那是 CFW 核心 sys-patch，换掉会导致所有游戏都「无法启动软件」"
     },
     {
       "name": "EdiZon",
@@ -105,17 +111,21 @@
         "switch/.overlays/lang/EdiZon/zh-Hans.json",
         "switch/.overlays/lang/EdiZon/zh-Hant.json"
       ],
-      "note": "只取语言包；覆盖层本体版本较低，建议保留你自己的新版 .ovl"
+      "note": "只取语言包；覆盖层本体版本较低，建议保留你自己更新的 .ovl"
     }
   ],
+
   "obsolete_overlays": [
     { "remove": "switch/.overlays/ovlSysmodules.ovl", "replaced_by": "ovl-sysmodules.ovl" },
     { "remove": "switch/.overlays/ReverseNX-RT-ovl.ovl", "replaced_by": "ReverseNX-RT.ovl" },
     { "remove": "switch/.overlays/sys-clk-overlay.ovl", "replaced_by": "sys-clk.ovl" },
     { "remove": "switch/.overlays/sys-patch-overlay.ovl", "replaced_by": "sys-patch.ovl" }
   ],
+
   "preserve_user_configs": [
     "config/sys-patch/config.ini",
-    "config/ultrahand/config.ini"
+    "config/ultrahand/config.ini",
+    "config/sys-clk/config.ini",
+    "config/QuickNTP/config.ini"
   ]
 }

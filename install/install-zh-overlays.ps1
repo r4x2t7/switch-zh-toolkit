@@ -120,14 +120,47 @@ foreach ($pkg in $src.packages) {
     }
     Write-Ok "下载并校验通过 ($([math]::Round((Get-Item $zip).Length/1KB)) KB)"
 
+    # 版本守卫：例如中文 Nyx 只有在卡上现有版本一致时才允许替换
+    if ($pkg.require_file) {
+        $rf = Join-Path $sd ($pkg.require_file -replace '/', '\')
+        if (-not (Test-Path $rf)) {
+            Write-Err "守卫未通过：卡上缺少 $($pkg.require_file)，已跳过该包"
+            continue
+        }
+        $bytes = [System.IO.File]::ReadAllBytes($rf)
+        $off = [int]$pkg.require_offset
+        $exp = [System.Text.Encoding]::ASCII.GetBytes([string]$pkg.require_bytes)
+        $got = $bytes[$off..($off + $exp.Length - 1)]
+        if (-not [System.Linq.Enumerable]::SequenceEqual([byte[]]$exp, [byte[]]$got)) {
+            Write-Err ("守卫未通过：{0} 偏移 0x{1:X} 期望 '{2}' 实际 '{3}'，已跳过该包（版本不匹配，强装会导致启动失败）" -f `
+                $pkg.require_file, $off, $pkg.require_bytes,
+                ([System.Text.Encoding]::ASCII.GetString([byte[]]$got)))
+            continue
+        }
+        Write-Ok "版本守卫通过（$($pkg.require_file) 偏移 0x$('{0:X}' -f $off) = '$($pkg.require_bytes)'）"
+    }
+
     $ex = Join-Path $WorkDir $pkg.name
     if (Test-Path $ex) { Remove-Item $ex -Recurse -Force }
     Expand-Archive -Path $zip -DestinationPath $ex -Force
 
     foreach ($rel in $pkg.provides) {
-        if ($src.preserve_user_configs -contains $rel) {
-            Write-Warn2 "保留用户配置，跳过: $rel"
+        # 防线一：绝不碰 CFW 核心 sysmodule（换掉会导致所有游戏都起不来）
+        $blocked = $false
+        foreach ($pat in $src.do_not_touch) {
+            if ($rel -like $pat -or $rel -eq $pat) { $blocked = $true; break }
+        }
+        if ($blocked) {
+            Write-Warn2 "保护名单，跳过（不改动 CFW 核心）: $rel"
             continue
+        }
+        # 防线二：用户已存在的配置文件不覆盖
+        if ($src.preserve_user_configs -contains $rel) {
+            $exist = Join-Path $sd ($rel -replace '/', '\')
+            if (Test-Path $exist) {
+                Write-Warn2 "保留用户已有配置，跳过: $rel"
+                continue
+            }
         }
         $pattern = $rel -replace '/', '\'
         $files = Get-ChildItem -Path (Join-Path $ex $pattern) -ErrorAction SilentlyContinue
