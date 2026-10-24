@@ -96,6 +96,28 @@ icon=bootloader/res/icon_emu_nobox.bmp
 
 完整机制（含源码行号）见 [`docs/overlay-lang-mechanism.md`](docs/overlay-lang-mechanism.md)。
 
+### USB 3.0（SuperSpeed）强制开启
+
+`config-samples/atmosphere/system_settings.ini` 是可直接用的配置：
+
+```ini
+[usb]
+usb30_force_enabled = u8!0x1
+```
+
+放到 SD 卡的 `atmosphere/config/system_settings.ini`（该目录不存在就新建），**重启主机生效**。
+
+- 机制：Atmosphère 的 `fusee_setup_horizon` 开机时读这个文件，
+  `usb30_force_enabled == "u8!0x1"` 就给 secmon 置 `ForceEnableUsb30`。
+  **值必须原样写成 `u8!0x1`**，写成 `1` 不会被识别。
+- ⚠️ Atmosphère changelog 明确提示：**开启 USB 3.0 常常会严重影响无线通信**。
+  若出现 WiFi 异常，把值改回 `u8!0x0` 即可。
+- 硬件前提：主机本体 USB-C 口要有 USB 3.0（T210B01 改款机 / OLED 才有；
+  初代 HAC-001 的主机口只有 USB 2.0，需走底座）。
+- 怎么确认生效：重启后看 DBI 的 `Speed` 是否变成 SuperSpeed，
+  或在 PC 端看该 USB 设备挂到的是不是 xHCI（USB 3.0 根集线器）。
+
+
 ### hbmenu（Homebrew Menu）汉化
 
 `hekate-zh/hbmenu_zh.nro` 是打好中文补丁的 **nx-hbmenu v3.6.1**。
